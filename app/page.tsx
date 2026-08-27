@@ -1,18 +1,5 @@
-const proyectos = [
-  { nombre: "Indico", numero: "2345", direccion: "Avenida Santa Fe 1200", etapa: "En proyecto", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Ventas" },
-  { nombre: "Insigne", numero: "2102", direccion: "Av. Pueyrredón 430", etapa: "En proyecto", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Ventas" },
-  { nombre: "San Eugenio etapa 2", numero: "1987", direccion: "Calle San Eugenio 550", etapa: "En construcción", tipo: "Residencial", region: "Córdoba", agrupamiento: "Almagro", departamento: "Operaciones" },
-  { nombre: "Lyon Bilbao", numero: "2241", direccion: "Avenida Bilbao 820", etapa: "En proyecto", tipo: "Mixto", region: "CABA", agrupamiento: "Almagro", departamento: "Marketing" },
-  { nombre: "Almagro Plus", numero: "3050", direccion: "Avenida Rivadavia 2100", etapa: "Próximo lanzamiento", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Comercial" },
-  { nombre: "Alderete Cook", numero: "3120", direccion: "Calle Alderete 20", etapa: "En proyecto", tipo: "Oficinas", region: "CABA", agrupamiento: "Almagro", departamento: "Diseño" },
-  { nombre: "Carrera IV", numero: "2874", direccion: "Carrera IV 1100", etapa: "En construcción", tipo: "Residencial", region: "Bogotá", agrupamiento: "Almagro", departamento: "Operaciones" },
-  { nombre: "Parque Brasil", numero: "3311", direccion: "Avenida Brasil 770", etapa: "En proyecto", tipo: "Comercial", region: "Río de Janeiro", agrupamiento: "Almagro", departamento: "Ventas" },
-  { nombre: "Los Cactus", numero: "2689", direccion: "Los Cactus 69", etapa: "En proyecto", tipo: "Residencial", region: "Mendoza", agrupamiento: "Almagro", departamento: "Diseño" },
-  { nombre: "Almagro Signature (Próximo lanzamiento)", numero: "3405", direccion: "Avenida Callao 1490", etapa: "Próximo lanzamiento", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Comercial" },
-  { nombre: "Almagro Balance", numero: "2995", direccion: "Calle Balcarce 380", etapa: "En proyecto", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Ventas" },
-  { nombre: "Terra", numero: "2550", direccion: "Avenida Terra 430", etapa: "En construcción", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Operaciones" },
-  { nombre: "Tirreno (Próximo lanzamiento)", numero: "3608", direccion: "Calle Tirreno 104", etapa: "Próximo lanzamiento", tipo: "Residencial", region: "CABA", agrupamiento: "Almagro", departamento: "Comercial" },
-];
+import Link from "next/link";
+import { proyectos } from "./data/projects";
 
 function Home() {
   return (
@@ -90,9 +77,9 @@ function Home() {
                 {proyectos.map((proyecto) => (
                   <tr key={proyecto.nombre} className="border-t border-zinc-200 hover:bg-zinc-50">
                     <td className="border-r border-zinc-200 px-4 py-3 text-zinc-800">
-                      <span className="inline-flex items-center gap-2 text-[15px] font-medium text-[#1766c7]">
+                      <Link href={`/proyecto/${proyecto.slug}`} className="inline-flex items-center gap-2 text-[15px] font-medium text-[#1766c7] transition hover:text-[#0e4da8]">
                         {proyecto.nombre}
-                      </span>
+                      </Link>
                     </td>
                     <td className="border-r border-zinc-200 px-4 py-3 text-zinc-600">{proyecto.numero}</td>
                     <td className="border-r border-zinc-200 px-4 py-3 text-zinc-600">{proyecto.direccion}</td>
