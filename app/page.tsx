@@ -17,9 +17,9 @@ function Home() {
           <button className="border-b-2 border-zinc-900 pb-1 text-zinc-900">Portafolio</button>
         </nav>
 
-        <button className="rounded-md border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-200">
+        <Link href="/reportes" className="rounded-md border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-200">
           Reportes
-        </button>
+        </Link>
       </header>
 
       <main className="mx-auto max-w-[1500px] px-6 py-8">
