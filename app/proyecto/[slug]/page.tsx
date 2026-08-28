@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProjectBySlug, proyectos } from "../../data/projects";
+import ProjectInspections from "./ProjectInspections";
 
 export function generateStaticParams() {
   return proyectos.map((project) => ({ slug: project.slug }));
@@ -86,41 +87,7 @@ export default async function ProjectDetailPage({
             </div>
 
             <div className="mt-6 overflow-hidden rounded-xl border border-zinc-200">
-              <table className="min-w-full border-collapse text-left text-sm text-zinc-700">
-                <thead className="bg-zinc-100 text-zinc-700">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold">Nombre</th>
-                    <th className="px-4 py-3 font-semibold">Estado</th>
-                    <th className="px-4 py-3 font-semibold">Fecha</th>
-                    <th className="px-4 py-3 font-semibold">Responsable</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white">
-                  {[
-                    ["Inspección de estructura", "Completada", "12 Ago 2026", "G. Hernandez"],
-                    ["Control de calidad", "Pendiente", "18 Ago 2026", "P. Duran"],
-                    ["Revisión de obra civil", "En curso", "22 Ago 2026", "M. Lucho"],
-                    ["Inspección final", "Pendiente", "30 Ago 2026", "A. García"],
-                  ].map(([name, estado, fecha, responsable]) => (
-                    <tr key={name} className="border-t border-zinc-200">
-                      <td className="px-4 py-3">{name}</td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                          estado === "Completada"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : estado === "En curso"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-amber-100 text-amber-700"
-                        }`}>
-                          {estado}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">{fecha}</td>
-                      <td className="px-4 py-3">{responsable}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <ProjectInspections projectSlug={project.slug} />
             </div>
           </div>
 

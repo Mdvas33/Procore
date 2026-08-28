@@ -10,7 +10,7 @@ type Observation = {
   description: string;
   files: string[];
 };
-type SavedForm = { answers?: Record<string, Result>; observations?: Record<string, Observation>; submitted?: boolean };
+type SavedForm = { answers?: Record<string, Result>; observations?: Record<string, Observation>; submitted?: boolean; formName?: string; createdAt?: string };
 
 export default function FormularioChecklist({ checklist, projectSlug }: { checklist: ChecklistSection[]; projectSlug: string }) {
   const storageKey = `procore-formulario-${projectSlug}`;
@@ -61,7 +61,15 @@ export default function FormularioChecklist({ checklist, projectSlug }: { checkl
       return;
     }
 
-    window.localStorage.setItem(storageKey, JSON.stringify({ answers, observations, submitted: true }));
+    const existing = window.localStorage.getItem(storageKey);
+    const previous = existing ? JSON.parse(existing) as SavedForm : null;
+    window.localStorage.setItem(storageKey, JSON.stringify({
+      answers,
+      observations,
+      submitted: true,
+      formName: "Inspección de Marketing",
+      createdAt: previous?.createdAt ?? new Date().toISOString(),
+    }));
     setSubmitted(true);
   }
 
