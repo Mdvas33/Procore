@@ -1,7 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { proyectos } from "./data/projects";
 
 function Home() {
+  const [activeBrand, setActiveBrand] = useState("Almagro");
+  const brands = ["Almagro", "Socovesa", "Pilares"];
+  const filteredProjects = proyectos.filter((proyecto) => proyecto.marca === activeBrand);
+
   return (
     <div className="min-h-screen bg-[#f3f4f6] text-zinc-900">
       <header className="flex items-center justify-between border-b border-zinc-200 bg-white/80 px-6 py-4 backdrop-blur-sm">
@@ -22,6 +29,23 @@ function Home() {
             <button className="flex h-9 w-9 items-center justify-center rounded-md border border-zinc-200 bg-white text-xl text-zinc-500 shadow-sm">
               ⋮
             </button>
+          </div>
+
+          <div className="border-b border-zinc-200 bg-white px-5 pt-3">
+            <div className="flex gap-6" role="tablist" aria-label="Marcas">
+              {brands.map((brand) => (
+                <button
+                  key={brand}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeBrand === brand}
+                  onClick={() => setActiveBrand(brand)}
+                  className={`border-b-2 px-1 pb-3 text-sm font-semibold transition ${activeBrand === brand ? "border-[#1766c7] text-[#1766c7]" : "border-transparent text-zinc-500 hover:text-zinc-800"}`}
+                >
+                  {brand}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
@@ -74,7 +98,11 @@ function Home() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {proyectos.map((proyecto) => (
+                {filteredProjects.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-4 py-12 text-center text-sm text-zinc-500">No hay proyectos registrados para {activeBrand}.</td>
+                  </tr>
+                ) : filteredProjects.map((proyecto) => (
                   <tr key={proyecto.nombre} className="border-t border-zinc-200 hover:bg-zinc-50">
                     <td className="border-r border-zinc-200 px-4 py-3 text-zinc-800">
                       <Link href={`/proyecto/${proyecto.slug}`} className="inline-flex items-center gap-2 text-[15px] font-medium text-[#1766c7] transition hover:text-[#0e4da8]">

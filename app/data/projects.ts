@@ -1,4 +1,7 @@
+export type Brand = "Almagro" | "Socovesa" | "Pilares";
+
 export type Project = {
+  marca: Brand;
   slug: string;
   nombre: string;
   numero: string;
@@ -16,6 +19,7 @@ export type Project = {
 
 export const proyectos: Project[] = [
   {
+    marca: "Almagro",
     slug: "indico",
     nombre: "Indico",
     numero: "2345",
@@ -31,6 +35,7 @@ export const proyectos: Project[] = [
     prioridad: "Alta",
   },
   {
+    marca: "Almagro",
     slug: "insigne",
     nombre: "Insigne",
     numero: "2102",
@@ -46,6 +51,7 @@ export const proyectos: Project[] = [
     prioridad: "Media",
   },
   {
+    marca: "Almagro",
     slug: "san-eugenio-etapa-2",
     nombre: "San Eugenio etapa 2",
     numero: "1987",
@@ -61,6 +67,7 @@ export const proyectos: Project[] = [
     prioridad: "Alta",
   },
   {
+    marca: "Almagro",
     slug: "lyon-bilbao",
     nombre: "Lyon Bilbao",
     numero: "2241",
@@ -76,6 +83,7 @@ export const proyectos: Project[] = [
     prioridad: "Media",
   },
   {
+    marca: "Almagro",
     slug: "almagro-plus",
     nombre: "Almagro Plus",
     numero: "3050",
@@ -91,6 +99,7 @@ export const proyectos: Project[] = [
     prioridad: "Baja",
   },
   {
+    marca: "Almagro",
     slug: "alderete-cook",
     nombre: "Alderete Cook",
     numero: "3120",
@@ -106,6 +115,7 @@ export const proyectos: Project[] = [
     prioridad: "Alta",
   },
   {
+    marca: "Almagro",
     slug: "carrera-iv",
     nombre: "Carrera IV",
     numero: "2874",
@@ -121,6 +131,7 @@ export const proyectos: Project[] = [
     prioridad: "Alta",
   },
   {
+    marca: "Almagro",
     slug: "parque-brasil",
     nombre: "Parque Brasil",
     numero: "3311",
@@ -136,6 +147,7 @@ export const proyectos: Project[] = [
     prioridad: "Media",
   },
   {
+    marca: "Almagro",
     slug: "los-cactus",
     nombre: "Los Cactus",
     numero: "2689",
@@ -151,6 +163,7 @@ export const proyectos: Project[] = [
     prioridad: "Media",
   },
   {
+    marca: "Almagro",
     slug: "almagro-signature-proximo-lanzamiento",
     nombre: "Almagro Signature (Próximo lanzamiento)",
     numero: "3405",
@@ -166,6 +179,7 @@ export const proyectos: Project[] = [
     prioridad: "Baja",
   },
   {
+    marca: "Almagro",
     slug: "almagro-balance",
     nombre: "Almagro Balance",
     numero: "2995",
@@ -181,6 +195,7 @@ export const proyectos: Project[] = [
     prioridad: "Media",
   },
   {
+    marca: "Almagro",
     slug: "terra",
     nombre: "Terra",
     numero: "2550",
@@ -196,6 +211,7 @@ export const proyectos: Project[] = [
     prioridad: "Alta",
   },
   {
+    marca: "Almagro",
     slug: "tirreno-proximo-lanzamiento",
     nombre: "Tirreno (Próximo lanzamiento)",
     numero: "3608",
