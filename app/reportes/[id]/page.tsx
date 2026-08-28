@@ -82,17 +82,19 @@ function readSavedForm(slug: string): SavedProjectForm | null {
 }
 
 function InspectionSummary({ reports }: { reports: { project: Project; form: SavedProjectForm | null }[] }) {
-  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Cantidad de inspecciones</h2>{reports.length === 0 ? <EmptyChart text="Aún no hay inspecciones enviadas." /> : <div className="space-y-4">{reports.map(({ project }) => <BarRow key={project.slug} label={project.nombre} value={1} max={1} />)}</div>}</div>;
+  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Cantidad de inspecciones</h2>{reports.length === 0 ? <EmptyChart text="Aún no hay inspecciones enviadas." /> : <VerticalChart items={reports.map(({ project }) => ({ label: project.nombre, value: 1 }))} />}</div>;
 }
 
 function ObservationSummary({ reports }: { reports: { project: Project; form: SavedProjectForm | null }[] }) {
   const items = reports.map(({ project, form }) => ({ project, value: Object.values(form?.answers ?? {}).filter((answer) => answer === "No pasa").length }));
-  const max = Math.max(...items.map((item) => item.value), 1);
-  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Resumen de observaciones</h2>{items.length === 0 ? <EmptyChart text="Aún no hay observaciones realizadas." /> : <div className="space-y-4">{items.filter((item) => item.value > 0).map(({ project, value }) => <BarRow key={project.slug} label={project.nombre} value={value} max={max} />)}{items.every((item) => item.value === 0) && <EmptyChart text="Los formularios enviados no tienen observaciones." />}</div>}</div>;
+  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Resumen de observaciones</h2>{items.length === 0 ? <EmptyChart text="Aún no hay observaciones realizadas." /> : items.every((item) => item.value === 0) ? <EmptyChart text="Los formularios enviados no tienen observaciones." /> : <VerticalChart items={items.filter((item) => item.value > 0).map(({ project, value }) => ({ label: project.nombre, value }))} />}</div>;
 }
 
-function BarRow({ label, value, max }: { label: string; value: number; max: number }) {
-  return <div className="grid grid-cols-[minmax(130px,210px)_1fr_32px] items-center gap-3 text-sm"><span className="truncate text-zinc-700" title={label}>{label}</span><div className="h-7 rounded-sm bg-zinc-100"><div className="h-full rounded-sm bg-[#5795cc]" style={{ width: `${Math.max((value / max) * 100, 5)}%` }} /></div><strong className="text-right text-zinc-700">{value}</strong></div>;
+function VerticalChart({ items }: { items: { label: string; value: number }[] }) {
+  const max = Math.max(...items.map((item) => item.value), 1);
+  const axisSteps = Array.from({ length: max + 1 }, (_, index) => max - index);
+
+  return <div className="grid grid-cols-[28px_1fr] gap-3"><div className="flex h-72 flex-col justify-between pb-7 text-right text-xs text-zinc-600">{axisSteps.map((step) => <span key={step}>{step}</span>)}</div><div className="relative h-72 border-b border-zinc-300"><div className="absolute inset-x-0 top-0 flex h-[calc(100%-28px)] flex-col justify-between">{axisSteps.map((step) => <span key={step} className="border-t border-zinc-200" />)}</div><div className="relative flex h-full items-end justify-around gap-2 px-2"><div className="absolute inset-x-0 bottom-0 flex justify-around gap-2 px-2">{items.map((item) => <div key={item.label} className="h-7 flex-1 text-center text-xs text-zinc-700"><span className="block truncate" title={item.label}>{item.label}</span></div>)}</div>{items.map((item) => <div key={item.label} className="flex h-[calc(100%-28px)] flex-1 items-end justify-center"><div className="relative w-full max-w-28 rounded-t-sm bg-[#5795cc]" style={{ height: `${Math.max((item.value / max) * 100, 4)}%` }}><strong className="absolute -top-6 left-0 w-full text-center text-sm font-semibold text-zinc-800">{item.value}</strong></div></div>)}</div></div></div>;
 }
 
 function EmptyChart({ text }: { text: string }) { return <p className="py-14 text-center text-sm text-zinc-500">{text}</p>; }
