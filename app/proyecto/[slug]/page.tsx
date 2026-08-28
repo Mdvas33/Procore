@@ -80,12 +80,6 @@ export default async function ProjectDetailPage({
               </Link>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <StatCard label="Total" value={String(project.inspecciones)} tone="blue" />
-              <StatCard label="Completadas" value={String(project.completadas)} tone="green" />
-              <StatCard label="Pendientes" value={String(project.pendientes)} tone="amber" />
-            </div>
-
             <div className="mt-6 overflow-hidden rounded-xl border border-zinc-200">
               <ProjectInspections projectSlug={project.slug} />
             </div>
@@ -116,31 +110,6 @@ export default async function ProjectDetailPage({
           </aside>
         </section>
       </main>
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "blue" | "green" | "amber";
-}) {
-  const toneClasses = {
-    blue: "bg-blue-50 text-blue-700",
-    green: "bg-emerald-50 text-emerald-700",
-    amber: "bg-amber-50 text-amber-700",
-  };
-
-  return (
-    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-      <p className="text-sm text-zinc-500">{label}</p>
-      <div className={`mt-3 inline-flex rounded-full px-3 py-1 text-lg font-bold ${toneClasses[tone]}`}>
-        {value}
-      </div>
     </div>
   );
 }
