@@ -42,7 +42,7 @@ export default async function FormularioPage({
         <span className="text-zinc-900">Formulario</span>
       </div>
 
-      <FormularioChecklist checklist={checklist} />
+      <FormularioChecklist checklist={checklist} projectSlug={project.slug} />
     </div>
   );
 }

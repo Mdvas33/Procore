@@ -10,11 +10,25 @@ type Observation = {
   description: string;
   files: string[];
 };
+type SavedForm = { answers?: Record<string, Result>; observations?: Record<string, Observation>; submitted?: boolean };
 
-export default function FormularioChecklist({ checklist }: { checklist: ChecklistSection[] }) {
-  const [answers, setAnswers] = useState<Record<string, Result>>({});
-  const [observations, setObservations] = useState<Record<string, Observation>>({});
+export default function FormularioChecklist({ checklist, projectSlug }: { checklist: ChecklistSection[]; projectSlug: string }) {
+  const storageKey = `procore-formulario-${projectSlug}`;
+  const [savedForm] = useState<SavedForm | null>(() => {
+    if (typeof window === "undefined") return null;
+    const saved = window.localStorage.getItem(storageKey);
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved) as SavedForm;
+    } catch {
+      window.localStorage.removeItem(storageKey);
+      return null;
+    }
+  });
+  const [answers, setAnswers] = useState<Record<string, Result>>(savedForm?.answers ?? {});
+  const [observations, setObservations] = useState<Record<string, Observation>>(savedForm?.observations ?? {});
   const [activeObservation, setActiveObservation] = useState<{ id: string; title: string } | null>(null);
+  const [submitted, setSubmitted] = useState(savedForm?.submitted ?? false);
   const total = checklist.reduce((count, section) => count + section.items.length, 0);
   const counts = {
     Pasa: Object.values(answers).filter((answer) => answer === "Pasa").length,
@@ -41,6 +55,16 @@ export default function FormularioChecklist({ checklist }: { checklist: Checklis
     setObservations((current) => ({ ...current, [id]: { ...current[id], ...changes } }));
   }
 
+  function submitForm() {
+    if (completed < total) {
+      window.alert(`Debes responder las ${total} preguntas antes de enviar el formulario.`);
+      return;
+    }
+
+    window.localStorage.setItem(storageKey, JSON.stringify({ answers, observations, submitted: true }));
+    setSubmitted(true);
+  }
+
   return (
     <>
       <section className="mb-5 flex flex-wrap items-center justify-center gap-12 border-b border-zinc-200 bg-white px-8 py-6 shadow-sm sm:justify-between">
@@ -59,7 +83,7 @@ export default function FormularioChecklist({ checklist }: { checklist: Checklis
       <main className="mx-auto max-w-[1320px] px-4 py-5 sm:px-6">
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-zinc-900">Ítems de inspección</h1>
-          <span className="hidden text-sm text-zinc-500 sm:block">Selecciona una opción en cada pregunta</span>
+          <span className={`hidden text-sm font-semibold sm:block ${submitted ? "text-emerald-700" : "text-zinc-500"}`}>{submitted ? "Formulario enviado y guardado" : "Selecciona una opción en cada pregunta"}</span>
         </div>
 
         <div className="overflow-hidden border border-zinc-200 bg-white shadow-sm">
@@ -100,7 +124,7 @@ export default function FormularioChecklist({ checklist }: { checklist: Checklis
 
         <div className="flex justify-end gap-3 py-6">
           <button type="button" className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50">Guardar borrador</button>
-          <button type="button" className="rounded-md bg-[#ff6b2c] px-4 py-2 text-sm font-semibold text-white hover:bg-[#e65d1e]">Enviar formulario</button>
+          <button type="button" onClick={submitForm} className="rounded-md bg-[#ff6b2c] px-4 py-2 text-sm font-semibold text-white hover:bg-[#e65d1e]">{submitted ? "Formulario enviado" : "Enviar formulario"}</button>
         </div>
       </main>
       {activeObservation && (
