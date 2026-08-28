@@ -36,6 +36,7 @@ export default function FormularioChecklist({ checklist, projectSlug }: { checkl
     "N/A": Object.values(answers).filter((answer) => answer === "N/A").length,
   };
   const completed = counts.Pasa + counts["No pasa"] + counts["N/A"];
+  const observationCount = Object.keys(observations).length;
 
   function setAnswer(id: string, result: Result) {
     setAnswers((current) => ({ ...current, [id]: result }));
@@ -75,17 +76,9 @@ export default function FormularioChecklist({ checklist, projectSlug }: { checkl
 
   return (
     <>
-      <section className="mb-5 flex flex-wrap items-center justify-center gap-12 border-b border-zinc-200 bg-white px-8 py-6 shadow-sm sm:justify-between">
-        <ProgressRing value={completed} total={total} color="#277b37" />
-        <div className="flex items-center gap-7 text-sm text-zinc-700">
-          <ResultCount color="text-emerald-700" icon="✓" value={counts.Pasa} />
-          <ResultCount color="text-red-600" icon="×" value={counts["No pasa"]} />
-          <ResultCount color="text-zinc-500" icon="／" value={counts["N/A"]} />
-        </div>
-        <div className="text-center text-sm text-zinc-500">
-          <strong className="block text-2xl text-zinc-900">{completed}/{total}</strong>
-          Ítems respondidos
-        </div>
+      <section className="mb-5 grid gap-6 border-b border-zinc-200 bg-white px-6 py-4 shadow-sm lg:grid-cols-2 lg:divide-x lg:divide-zinc-200 lg:px-8">
+        <InspectionChart counts={counts} completed={completed} total={total} />
+        <ObservationChart count={observationCount} />
       </section>
 
       <main className="mx-auto max-w-[1320px] px-4 py-5 sm:px-6">
@@ -208,18 +201,64 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return <label className="block text-xs font-medium text-zinc-700">{label}<span className="mt-1 block">{children}</span></label>;
 }
 
-function ResultCount({ color, icon, value }: { color: string; icon: string; value: number }) {
-  return <span className={`flex items-center gap-1 ${color}`}><strong className="text-2xl">{icon}</strong>{value}</span>;
-}
+function InspectionChart({ counts, completed, total }: { counts: { Pasa: number; "No pasa": number; "N/A": number }; completed: number; total: number }) {
+  const notInspected = total - completed;
+  const segments = [
+    { label: "En cumplimiento", value: counts.Pasa, color: "#247b35" },
+    { label: "Deficiente", value: counts["No pasa"], color: "#df2429" },
+    { label: "N/A", value: counts["N/A"], color: "#647078" },
+    { label: "No inspeccionado", value: notInspected, color: "#d8dddf" },
+  ];
 
-function ProgressRing({ value, total, color }: { value: number; total: number; color: string }) {
-  const progress = total ? (value / total) * 360 : 0;
   return (
-    <div className="flex items-center gap-3">
-      <div className="grid h-[72px] w-[72px] place-items-center rounded-full" style={{ background: `conic-gradient(${color} ${progress}deg, #d9dde0 0deg)` }}>
-        <div className="grid h-[56px] w-[56px] place-items-center rounded-full bg-white text-sm font-bold text-zinc-800">{Math.round((value / total) * 100)}%</div>
+    <div>
+      <h2 className="mb-2 text-base font-bold text-zinc-800">Estatus de ítems de inspección</h2>
+      <div className="flex items-center justify-center gap-6 sm:justify-start sm:pl-10">
+        <DonutChart total={total} center={`${completed}/${total}`} subtitle="Inspeccionado" segments={segments} />
+        <ChartLegend segments={segments} />
       </div>
-      <div><strong className="block text-sm text-zinc-900">Estado de ítems de inspección</strong><span className="text-xs text-zinc-500">{value}/{total} inspeccionado</span></div>
     </div>
   );
+}
+
+function ObservationChart({ count }: { count: number }) {
+  const segments = [{ label: "Iniciado", value: count, color: "#19438e" }];
+
+  return (
+    <div className="lg:pl-6">
+      <h2 className="mb-2 text-base font-bold text-zinc-800">Observaciones creadas de la inspección</h2>
+      <div className="flex items-center justify-center gap-6 sm:justify-start sm:pl-10">
+        <DonutChart total={count} center={`0/${count}`} subtitle="Cerrado" segments={segments} />
+        <ChartLegend segments={[
+          ...segments,
+          { label: "Listo para revisión", value: 0, color: "#2665c4" },
+          { label: "Rechazado", value: 0, color: "#78a1e4" },
+          { label: "Cerrado", value: 0, color: "#dbe6f8" },
+        ]} />
+      </div>
+    </div>
+  );
+}
+
+function DonutChart({ total, center, subtitle, segments }: { total: number; center: string; subtitle: string; segments: { label: string; value: number; color: string }[] }) {
+  const gradient = segments.reduce<{ stops: string[]; offset: number }>((result, segment) => {
+    const nextOffset = result.offset + (total ? (segment.value / total) * 360 : 0);
+    return {
+      stops: [...result.stops, `${segment.color} ${result.offset}deg ${nextOffset}deg`],
+      offset: nextOffset,
+    };
+  }, { stops: [], offset: 0 }).stops.join(", ");
+
+  return (
+    <div className="relative grid h-40 w-40 shrink-0 place-items-center rounded-full" style={{ background: gradient ? `conic-gradient(${gradient})` : "#d8dddf" }}>
+      <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center">
+        <strong className="block text-xl leading-5 text-zinc-900">{center}</strong>
+        <span className="text-xs text-zinc-800">{subtitle}</span>
+      </div>
+    </div>
+  );
+}
+
+function ChartLegend({ segments }: { segments: { label: string; value: number; color: string }[] }) {
+  return <div className="space-y-2 text-sm text-zinc-700">{segments.map((segment) => <div key={segment.label} className="flex items-center gap-2 whitespace-nowrap"><span className="h-3 w-3 rounded-full" style={{ backgroundColor: segment.color }} />{segment.value} {segment.label}</div>)}</div>;
 }
