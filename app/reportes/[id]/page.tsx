@@ -32,6 +32,8 @@ export default function ReportDetailPage() {
     }
   });
   const brandProjects = report ? proyectos.filter((project) => project.marca === report.brand) : [];
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const completedProjects = brandProjects.filter((project) => {
     if (typeof window === "undefined") return false;
     const saved = window.localStorage.getItem(`procore-formulario-${project.slug}`);
@@ -46,7 +48,12 @@ export default function ReportDetailPage() {
   const completedFormData = brandProjects.map((project) => ({
     project,
     form: readSavedForm(project.slug),
-  })).filter(({ form }) => form?.submitted);
+  })).filter(({ form }) => {
+    if (!form?.submitted || !form.createdAt) return false;
+    const createdAt = form.createdAt.slice(0, 10);
+    return (!fromDate || createdAt >= fromDate) && (!toDate || createdAt <= toDate);
+  });
+  const filteredCompletedProjects = completedFormData.map(({ project }) => project);
 
   if (!report) {
     return <div className="min-h-screen bg-[#f3f4f6] p-8 text-zinc-900"><Link href="/reportes" className="text-[#1766c7] hover:underline">← Volver a reportes</Link><h1 className="mt-8 text-2xl font-bold">Reporte no encontrado</h1></div>;
@@ -62,12 +69,12 @@ export default function ReportDetailPage() {
       </header>
       <main className="mx-auto max-w-[1200px] px-6 py-7">
         <section className="overflow-hidden border border-zinc-300 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-zinc-300 px-5 py-4"><div className="flex gap-6"><button type="button" onClick={() => setActiveTab("summary")} className={`border-b-2 pb-2 text-sm font-semibold ${activeTab === "summary" ? "border-[#ff6b2c] text-zinc-900" : "border-transparent text-zinc-600"}`}>Resumen de inspección</button><button type="button" onClick={() => setActiveTab("observations")} className={`border-b-2 pb-2 text-sm font-semibold ${activeTab === "observations" ? "border-[#ff6b2c] text-zinc-900" : "border-transparent text-zinc-600"}`}>Observaciones</button></div><span className="text-sm text-zinc-500">{completedFormData.length} inspecciones realizadas</span></div>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-300 px-5 py-4 print:hidden"><div className="flex gap-6"><button type="button" onClick={() => setActiveTab("summary")} className={`border-b-2 pb-2 text-sm font-semibold ${activeTab === "summary" ? "border-[#ff6b2c] text-zinc-900" : "border-transparent text-zinc-600"}`}>Resumen de inspección</button><button type="button" onClick={() => setActiveTab("observations")} className={`border-b-2 pb-2 text-sm font-semibold ${activeTab === "observations" ? "border-[#ff6b2c] text-zinc-900" : "border-transparent text-zinc-600"}`}>Observaciones</button></div><div className="flex flex-wrap items-center gap-2"><label className="text-xs font-semibold text-zinc-600">Desde<input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} className="ml-1 rounded border border-zinc-300 px-2 py-1 text-sm font-normal text-zinc-700" /></label><label className="text-xs font-semibold text-zinc-600">Hasta<input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} className="ml-1 rounded border border-zinc-300 px-2 py-1 text-sm font-normal text-zinc-700" /></label><button type="button" onClick={() => window.print()} className="rounded-md bg-[#ff5b25] px-3 py-2 text-sm font-semibold text-white hover:bg-[#e94e1a]">Exportar PDF</button></div></div>
           {activeTab === "summary" ? <InspectionSummary reports={completedFormData} /> : <ObservationSummary reports={completedFormData} />}
         </section>
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.45fr_1fr]">
-          <section className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"><div className="border-b border-zinc-200 px-5 py-5"><h2 className="text-xl font-bold">Proyectos de {report.brand}</h2><p className="mt-1 text-sm text-zinc-500">Crea el formulario de inspección de {report.month} para cada proyecto.</p></div><div className="divide-y divide-zinc-200">{brandProjects.map((project) => <ProjectRow key={project.slug} project={project} reportId={report.id} completed={completedProjects.some((completedProject) => completedProject.slug === project.slug)} />)}</div></section>
-          <CompletedForms projects={completedProjects} reportId={report.id} />
+          <section className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm print:hidden"><div className="border-b border-zinc-200 px-5 py-5"><h2 className="text-xl font-bold">Proyectos de {report.brand}</h2><p className="mt-1 text-sm text-zinc-500">Crea el formulario de inspección de {report.month} para cada proyecto.</p></div><div className="divide-y divide-zinc-200">{brandProjects.map((project) => <ProjectRow key={project.slug} project={project} reportId={report.id} completed={completedProjects.some((completedProject) => completedProject.slug === project.slug)} />)}</div></section>
+          <CompletedForms projects={filteredCompletedProjects} reportId={report.id} />
         </div>
       </main>
     </div>
