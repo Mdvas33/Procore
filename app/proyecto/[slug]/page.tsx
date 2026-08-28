@@ -33,7 +33,7 @@ export default async function ProjectDetailPage({
 
         <div className="flex items-center gap-4 text-sm">
           <button className="rounded-md border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-zinc-200">Favoritos</button>
-          <button className="rounded-md bg-[#ff6b2c] px-3 py-1.5 font-medium text-white">Crear formulario</button>
+          <Link href={`/proyecto/${project.slug}/formulario`} className="rounded-md bg-[#ff6b2c] px-3 py-1.5 font-medium text-white">Crear formulario</Link>
         </div>
       </header>
 
@@ -71,9 +71,12 @@ export default async function ProjectDetailPage({
           <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-zinc-900">Inspecciones</h2>
-              <button className="rounded-md bg-[#ff6b2c] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#e65d1e]">
+              <Link
+                href={`/proyecto/${project.slug}/formulario`}
+                className="rounded-md bg-[#ff6b2c] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#e65d1e]"
+              >
                 Crear formulario
-              </button>
+              </Link>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -136,7 +139,9 @@ export default async function ProjectDetailPage({
             <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
               <h3 className="mb-4 text-xl font-bold text-zinc-900">Acciones rápidas</h3>
               <div className="flex flex-col gap-3">
-                <button className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-sm font-medium text-zinc-700 hover:bg-zinc-100">Ver checklist</button>
+                <Link href={`/proyecto/${project.slug}/formulario`} className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-sm font-medium text-zinc-700 hover:bg-zinc-100">
+                  Ver checklist
+                </Link>
                 <button className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-sm font-medium text-zinc-700 hover:bg-zinc-100">Agregar inspección</button>
                 <button className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-left text-sm font-medium text-zinc-700 hover:bg-zinc-100">Exportar reportes</button>
               </div>
