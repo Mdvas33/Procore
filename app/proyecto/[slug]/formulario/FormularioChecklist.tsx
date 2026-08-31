@@ -258,8 +258,8 @@ function DonutChart({ total, center, subtitle, segments }: { total: number; cent
   return (
     <div className="relative grid h-40 w-40 shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-[#f3f3f3] p-3" style={{ background: gradient ? `conic-gradient(${gradient})` : "#dfe4e7" }}>
       <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center shadow-inner">
-        <strong className="block text-[28px] font-semibold leading-7 text-zinc-900">{center}</strong>
-        <span className="mt-1 text-[12px] font-medium text-zinc-700">{subtitle}</span>
+        <strong className="block text-[18px] font-semibold leading-5 text-zinc-900">{center}</strong>
+        <span className="mt-0.5 text-[10px] font-medium text-zinc-700">{subtitle}</span>
       </div>
     </div>
   );
