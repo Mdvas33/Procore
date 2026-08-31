@@ -76,8 +76,8 @@ export default function FormularioChecklist({ checklist, projectSlug }: { checkl
 
   return (
     <>
-      <section className="mb-5 overflow-hidden rounded-[18px] border border-zinc-200 bg-[#f3f3f3] px-6 py-5 shadow-sm lg:grid-cols-2 lg:divide-x lg:divide-zinc-300 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-2">
+      <section className="mb-5 overflow-hidden rounded-[18px] border border-zinc-200 bg-[#f3f3f3] px-6 py-5 shadow-sm lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-2 lg:divide-x lg:divide-zinc-300">
           <InspectionChart counts={counts} completed={completed} total={total} />
           <ObservationChart count={observationCount} />
         </div>
@@ -206,10 +206,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function InspectionChart({ counts, completed, total }: { counts: { Pasa: number; "No pasa": number; "N/A": number }; completed: number; total: number }) {
   const notInspected = Math.max(total - completed, 0);
   const segments = [
-    { label: "En cumplimiento", value: counts.Pasa, color: "#2d7a52" },
-    { label: "Deficiente", value: counts["No pasa"], color: "#d9363e" },
-    { label: "Datos ingresados", value: 0, color: "#2aa4a4" },
-    { label: "N/A", value: counts["N/A"], color: "#b8c0c6" },
+    { label: "En cumplimiento", value: counts.Pasa, color: "#297b4d" },
+    { label: "Deficiente", value: counts["No pasa"], color: "#d8383b" },
+    { label: "Datos ingresados", value: counts["N/A"], color: "#0e9c9c" },
+    { label: "N/A", value: 0, color: "#b7bcc2" },
     { label: "No inspeccionado", value: notInspected, color: "#dfe4e7" },
   ];
 
@@ -226,7 +226,7 @@ function InspectionChart({ counts, completed, total }: { counts: { Pasa: number;
 
 function ObservationChart({ count }: { count: number }) {
   const total = Math.max(count, 2);
-  const segments = [{ label: "Iniciado", value: count, color: "#1b3d7d" }];
+  const segments = [{ label: "Iniciado", value: count, color: "#1b3e8c" }];
 
   return (
     <div className="px-1 py-1 lg:pl-6">
@@ -235,8 +235,8 @@ function ObservationChart({ count }: { count: number }) {
         <DonutChart total={total} center={`0/${total}`} subtitle="Cerrado" segments={segments} />
         <ChartLegend segments={[
           ...segments,
-          { label: "Listo para revisión", value: 0, color: "#3f7ad9" },
-          { label: "Rechazado", value: 0, color: "#7fa5e5" },
+          { label: "Listo para revisión", value: 0, color: "#4a90e2" },
+          { label: "Rechazado", value: 0, color: "#92b9ff" },
           { label: "Cerrado", value: 0, color: "#dfeaff" },
         ]} />
       </div>
