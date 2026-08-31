@@ -76,7 +76,7 @@ export default function FormularioChecklist({ checklist, projectSlug }: { checkl
 
   return (
     <>
-      <section className="mb-5 overflow-hidden rounded-[18px] border border-zinc-200 bg-[#f3f3f3] px-6 py-5 shadow-sm lg:px-8">
+      <section className="mb-5 overflow-hidden rounded-[18px] border border-zinc-200 bg-[#f3f3f3] px-6 py-4 shadow-sm lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:divide-x lg:divide-zinc-300">
           <InspectionChart counts={counts} completed={completed} total={total} />
           <ObservationChart count={observationCount} />
@@ -206,16 +206,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function InspectionChart({ counts, completed, total }: { counts: { Pasa: number; "No pasa": number; "N/A": number }; completed: number; total: number }) {
   const notInspected = Math.max(total - completed, 0);
   const segments = [
-    { label: "En cumplimiento", value: counts.Pasa, color: "#297b4d" },
-    { label: "Deficiente", value: counts["No pasa"], color: "#d8383b" },
-    { label: "Datos ingresados", value: counts["N/A"], color: "#0e9c9c" },
-    { label: "N/A", value: 0, color: "#b7bcc2" },
+    { label: "En cumplimiento", value: counts.Pasa, color: "#2d7a52" },
+    { label: "Deficiente", value: counts["No pasa"], color: "#d83637" },
+    { label: "Datos ingresados", value: 0, color: "#1f8dd6" },
+    { label: "N/A", value: counts["N/A"], color: "#7a7a7a" },
     { label: "No inspeccionado", value: notInspected, color: "#dfe4e7" },
   ];
 
   return (
     <div className="px-1 py-1">
-      <h2 className="mb-5 text-[18px] font-bold text-zinc-800">Estatus de ítems de inspección</h2>
+      <h2 className="mb-4 text-[18px] font-bold text-zinc-800">Estatus de ítems de inspección</h2>
       <div className="flex items-center justify-center gap-8 sm:justify-start sm:pl-8">
         <DonutChart total={total} center={`${completed}/${total}`} subtitle="Inspeccionado" segments={segments} />
         <ChartLegend segments={segments} />
@@ -225,18 +225,18 @@ function InspectionChart({ counts, completed, total }: { counts: { Pasa: number;
 }
 
 function ObservationChart({ count }: { count: number }) {
-  const total = Math.max(count, 2);
-  const segments = [{ label: "Iniciado", value: count, color: "#1b3e8c" }];
+  const total = Math.max(count, 1);
+  const segments = [{ label: "Iniciado", value: count, color: "#1f3c8f" }];
 
   return (
     <div className="px-1 py-1 lg:pl-6">
-      <h2 className="mb-5 text-[18px] font-bold text-zinc-800">Observaciones creadas de la inspección</h2>
+      <h2 className="mb-4 text-[18px] font-bold text-zinc-800">Observaciones creadas de la inspección</h2>
       <div className="flex items-center justify-center gap-8 sm:justify-start sm:pl-8">
         <DonutChart total={total} center={`0/${total}`} subtitle="Cerrado" segments={segments} />
         <ChartLegend segments={[
           ...segments,
           { label: "Listo para revisión", value: 0, color: "#4a90e2" },
-          { label: "Rechazado", value: 0, color: "#92b9ff" },
+          { label: "Rechazado", value: 0, color: "#9abef4" },
           { label: "Cerrado", value: 0, color: "#dfeaff" },
         ]} />
       </div>
@@ -246,8 +246,9 @@ function ObservationChart({ count }: { count: number }) {
 
 function DonutChart({ total, center, subtitle, segments }: { total: number; center: string; subtitle: string; segments: { label: string; value: number; color: string }[] }) {
   const visibleSegments = segments.filter((segment) => segment.value > 0);
+  const effectiveTotal = visibleSegments.reduce((sum, segment) => sum + segment.value, 0) || total || 1;
   const gradient = visibleSegments.reduce<{ stops: string[]; offset: number }>((result, segment) => {
-    const nextOffset = result.offset + (total ? (segment.value / total) * 360 : 0);
+    const nextOffset = result.offset + (effectiveTotal ? (segment.value / effectiveTotal) * 360 : 0);
     return {
       stops: [...result.stops, `${segment.color} ${result.offset}deg ${nextOffset}deg`],
       offset: nextOffset,
@@ -255,8 +256,8 @@ function DonutChart({ total, center, subtitle, segments }: { total: number; cent
   }, { stops: [], offset: 0 }).stops.join(", ");
 
   return (
-    <div className="relative grid h-48 w-48 shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-[#f3f3f3] p-3" style={{ background: gradient ? `conic-gradient(${gradient})` : "#dfe4e7" }}>
-      <div className="grid h-32 w-32 place-items-center rounded-full bg-white text-center shadow-inner">
+    <div className="relative grid h-40 w-40 shrink-0 place-items-center rounded-full border border-[#e5e7eb] bg-[#f3f3f3] p-3" style={{ background: gradient ? `conic-gradient(${gradient})` : "#dfe4e7" }}>
+      <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center shadow-inner">
         <strong className="block text-[28px] font-semibold leading-7 text-zinc-900">{center}</strong>
         <span className="mt-1 text-[12px] font-medium text-zinc-700">{subtitle}</span>
       </div>
@@ -266,11 +267,11 @@ function DonutChart({ total, center, subtitle, segments }: { total: number; cent
 
 function ChartLegend({ segments }: { segments: { label: string; value: number; color: string }[] }) {
   return (
-    <div className="space-y-2.5 text-[15px] text-zinc-700">
+    <div className="space-y-2 text-[15px] text-zinc-700">
       {segments.map((segment) => (
-        <div key={segment.label} className="flex items-center gap-3 whitespace-nowrap leading-none">
+        <div key={segment.label} className="flex items-center gap-2 whitespace-nowrap leading-none">
           <span className="h-3.5 w-3.5 rounded-full" style={{ backgroundColor: segment.color }} />
-          <span className="font-medium text-zinc-700">{segment.value}</span>
+          <span className="min-w-[18px] text-left font-medium text-zinc-800">{segment.value}</span>
           <span>{segment.label}</span>
         </div>
       ))}
