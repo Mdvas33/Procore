@@ -90,15 +90,15 @@ function readSavedForm(slug: string): SavedProjectForm | null {
 }
 
 function InspectionSummary({ reports }: { reports: { project: Project; form: SavedProjectForm | null }[] }) {
-  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Cantidad de inspecciones</h2>{reports.length === 0 ? <EmptyChart text="Aún no hay inspecciones enviadas." /> : <VerticalChart items={reports.map(({ project }) => ({ label: project.nombre, value: 1 }))} />}</div>;
+  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Cantidad de inspecciones</h2>{reports.length === 0 ? <EmptyChart text="Aún no hay inspecciones enviadas." /> : <VerticalChart items={reports.map(({ project }) => ({ label: project.nombre, value: 1 }))} legendLabel="Inspecciones" />}</div>;
 }
 
 function ObservationSummary({ reports }: { reports: { project: Project; form: SavedProjectForm | null }[] }) {
   const items = reports.map(({ project, form }) => ({ project, value: Object.values(form?.answers ?? {}).filter((answer) => answer === "No pasa").length }));
-  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Resumen de observaciones</h2>{items.length === 0 ? <EmptyChart text="Aún no hay observaciones realizadas." /> : items.every((item) => item.value === 0) ? <EmptyChart text="Los formularios enviados no tienen observaciones." /> : <VerticalChart items={items.filter((item) => item.value > 0).map(({ project, value }) => ({ label: project.nombre, value }))} />}</div>;
+  return <div className="p-5"><h2 className="mb-5 text-center text-base font-semibold text-zinc-800">Resumen de observaciones</h2>{items.length === 0 ? <EmptyChart text="Aún no hay observaciones realizadas." /> : items.every((item) => item.value === 0) ? <EmptyChart text="Los formularios enviados no tienen observaciones." /> : <VerticalChart items={items.filter((item) => item.value > 0).map(({ project, value }) => ({ label: project.nombre, value }))} legendLabel="Observaciones" />}</div>;
 }
 
-function VerticalChart({ items }: { items: { label: string; value: number }[] }) {
+function VerticalChart({ items, legendLabel = "Inspecciones" }: { items: { label: string; value: number }[]; legendLabel?: string }) {
   const max = Math.max(...items.map((item) => item.value), 1);
   const chartMax = Math.max(4, max);
   const axisSteps = Array.from({ length: chartMax + 1 }, (_, index) => chartMax - index);
@@ -120,17 +120,17 @@ function VerticalChart({ items }: { items: { label: string; value: number }[] })
             </div>
           ))}
         </div>
-        <div className="flex h-20 items-start justify-around gap-2 px-3 pt-3">
+        <div className="flex h-[72px] items-start justify-around gap-2 px-3 pt-2">
           {items.map((item) => (
             <div key={item.label} className="min-w-0 flex-1 text-center text-xs text-zinc-700">
               <span className="block truncate" title={item.label}>{item.label}</span>
             </div>
           ))}
         </div>
-        <div className="mt-3 text-center text-xs font-medium text-zinc-700">Nombre del proyecto</div>
-        <div className="mt-2 flex items-center justify-center gap-2 text-xs text-zinc-600">
+        <div className="-mt-1 text-center text-xs font-medium text-zinc-700">Nombre del proyecto</div>
+        <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-600">
           <span className="inline-block h-3 w-3 rounded-sm bg-[#5795cc] align-[-1px]" />
-          Observaciones
+          {legendLabel}
         </div>
       </div>
     </div>
@@ -143,7 +143,7 @@ function PrintableReport({ report, reports }: { report: Report; reports: { proje
   const inspectionItems = reports.map(({ project }) => ({ label: project.nombre, value: 1 }));
   const observationItems = reports.map(({ project, form }) => ({ label: project.nombre, value: Object.values(form?.answers ?? {}).filter((answer) => answer === "No pasa").length }));
 
-  return <section className="hidden print:block"><h2 className="mb-2 text-xl font-bold">{report.name}</h2><p className="mb-5 text-sm text-zinc-600">{report.brand} · {report.month} · {formatDate(report.createdAt)}</p><div className="space-y-6"><div className="border border-zinc-300"><h3 className="border-b border-zinc-200 p-3 text-center font-semibold">Resumen de inspección</h3>{inspectionItems.length === 0 ? <EmptyChart text="Aún no hay inspecciones enviadas." /> : <VerticalChart items={inspectionItems} />}</div><div className="border border-zinc-300"><h3 className="border-b border-zinc-200 p-3 text-center font-semibold">Observaciones realizadas</h3>{observationItems.length === 0 ? <EmptyChart text="Aún no hay observaciones realizadas." /> : <VerticalChart items={observationItems} />}</div></div><h3 className="mb-4 mt-8 text-lg font-bold">Detalle por proyecto inspeccionado</h3><div className="grid grid-cols-2 gap-5">{reports.map(({ project, form }) => <ProjectDonut key={project.slug} project={project} form={form} />)}</div></section>;
+  return <section className="hidden print:block"><h2 className="mb-2 text-xl font-bold">{report.name}</h2><p className="mb-5 text-sm text-zinc-600">{report.brand} · {report.month} · {formatDate(report.createdAt)}</p><div className="space-y-6"><div className="border border-zinc-300"><h3 className="border-b border-zinc-200 p-3 text-center font-semibold">Resumen de inspección</h3>{inspectionItems.length === 0 ? <EmptyChart text="Aún no hay inspecciones enviadas." /> : <VerticalChart items={inspectionItems} legendLabel="Inspecciones" />}</div><div className="border border-zinc-300"><h3 className="border-b border-zinc-200 p-3 text-center font-semibold">Observaciones realizadas</h3>{observationItems.length === 0 ? <EmptyChart text="Aún no hay observaciones realizadas." /> : <VerticalChart items={observationItems} legendLabel="Observaciones" />}</div></div><h3 className="mb-4 mt-8 text-lg font-bold">Detalle por proyecto inspeccionado</h3><div className="grid grid-cols-2 gap-5">{reports.map(({ project, form }) => <ProjectDonut key={project.slug} project={project} form={form} />)}</div></section>;
 }
 
 function ProjectDonut({ project, form }: { project: Project; form: SavedProjectForm | null }) {
