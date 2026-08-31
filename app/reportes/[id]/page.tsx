@@ -130,7 +130,7 @@ function VerticalChart({ items }: { items: { label: string; value: number }[] })
         <div className="mt-3 text-center text-xs font-medium text-zinc-700">Nombre del proyecto</div>
         <div className="mt-2 flex items-center justify-center gap-2 text-xs text-zinc-600">
           <span className="inline-block h-3 w-3 rounded-sm bg-[#5795cc] align-[-1px]" />
-          Inspecciones
+          Observaciones
         </div>
       </div>
     </div>
